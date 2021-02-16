@@ -4,7 +4,7 @@ $( document ).ready(function() {
 
   function getData(cityName) {
     let queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + '8b4842f519c4ee13b11ada28c264ec1a';
-
+    //clear();
     console.log(queryURL);
     $.ajax({
       url: queryURL,
@@ -12,23 +12,22 @@ $( document ).ready(function() {
     }).then(function(OWMData) {
       console.log(OWMData);
       //clear();
-      if (OWMData) {
+      /*if (OWMData) {
         for (let i = 0; i < cityArr.length; i++) {
           if (usersCityInput === cityArr[i]) break;
             //else
               
         }
-          /*
+          
           cityArr.push(usersCityInput);
-          localStorage.setItem("cities", JSON.stringify(cityArr)); */
-  /*
+          localStorage.setItem("cities", JSON.stringify(cityArr)); 
             var li = document.createElement("li");
           li.textContent = todo;
           li.setAttribute("data-index", i);
             for (let i = 0; i < cityArr.length; i++) {
               $("#searched-cities-container").append();
-            }*/
-      }
+            }
+      } */
       let cityName = OWMData.name;
       let currTemp = converttoF(OWMData.main.temp);
       let currHumidity = OWMData.main.humidity;
@@ -66,6 +65,7 @@ $( document ).ready(function() {
         //$('#uvi').text(uvIndex);
         var forecastEl = $('#forecast');
         forecastEl.text('5-Day Forecast:\n');
+        $('#forecast-card-container').empty();
         for (let i = 1; i < 6; i++) {
 
           var forecastCardEl = $('<div>').addClass('card shadow-lg text-white bg-primary mx-auto mb-10 p-2 forecast-card');
@@ -94,21 +94,22 @@ $( document ).ready(function() {
           */
     });
   }
-  /*
-  $(".search-city").on("click", function(event) {
+
+  $("#search-city").on("click", function(event) {
     event.preventDefault();
       
-    let usersCityInput = $("#users-city-name").val().trim();
+    var usersCityInput = $("#users-city-input").val().trim();
     if (usersCityInput === "") return;
-    let textContent = $(this).siblings("input").val();
+    var textContent = $(this).siblings("input").val();
+    console.log(textContent);
     cityArr.push(textContent);
     localStorage.setItem('cities', JSON.stringify(cityArr));
 
     getData(usersCityInput);
 
-    loadButtons();
+    //loadButtons();
   });
-*/
+
   // Converts Kelvin to Fahrenheit
   function converttoF(t) {
     return ((t - 273.15) * 1.80 + 32).toFixed(1);
@@ -153,5 +154,5 @@ $( document ).ready(function() {
     ('#city-buttons-container').append(buttonsDiv);
     
   } */
-  getData('Boca Raton');
+  //getData('Boca Raton');
 });
