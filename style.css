@@ -20,7 +20,7 @@
   background-color: #2b2bfd;
   color: #ffffff;
   width: 16.7%;
-  height: 120px;
+  height: 150px;
 }
 
 #blue-search-button {
@@ -31,4 +31,19 @@
 #sidebar {
   background-color: rgb(239, 251, 255);
   height: 100%
+}
+
+#future-icon {
+  height: 40px;
+  width: 40px;
+}
+
+.safe {
+  background-color: green;
+  color: white;
+}
+
+.danger {
+  background-color: red;
+  color: white;
 }
