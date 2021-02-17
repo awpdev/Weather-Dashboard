@@ -1,11 +1,12 @@
 $( document ).ready(function() {
 
-  let cityArr = []; 
-  let initialized = false; 
+  let cityArr = [];         //
+  let initialized = false;  // flag inside init()
 
   // Get weather data for city, renders elements to display the data
   function getData(cityName) {
 
+    // Current Weather API
     let queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + '8b4842f519c4ee13b11ada28c264ec1a';
     $.ajax({
       url: queryURL,
@@ -18,13 +19,14 @@ $( document ).ready(function() {
       let lon = OWMData.coord.lon;
       let lat = OWMData.coord.lat;
       
+      // populate current weather data section
       $('#city-name').text(cityName + ' (' + moment().format('l') + ') ');
       let currentWeatherIcon = $('<img>').attr('src', getWeatherIcon(OWMData.weather[0].main));
       $('#city-name').append(currentWeatherIcon);
       $('#current-temp').text('Temperature: ' + currTemp + ' °F');
       $('#current-humidity').text('Humidity: ' + currHumidity + '%');
       $('#wind-speed').text('Wind speed: ' + windSpeed + ' MPH');
-
+      // One Call API
       var fcQueryURL = 'https://api.openweathermap.org/data/2.5/onecall?lat=' + lat + '&lon=' + lon + '&exclude=minutely,hourly,alerts&appid=' + '8b4842f519c4ee13b11ada28c264ec1a';
       $.ajax({
         url: fcQueryURL,
@@ -35,6 +37,8 @@ $( document ).ready(function() {
         if (uvIndex <= 2) $('#uv-index').addClass('safe'); // green if UV index less than or equal to 2
         if (uvIndex >= 6) $('#uv-index').addClass('danger'); // red if UV index greater than or equal to 6
         $('#uv-index').text('UV Index: ' + uvIndex);
+
+        // populate forecasted weather section
         var forecastEl = $('#forecast');
         forecastEl.text('5-Day Forecast:\n');
         $('#forecast-card-container').empty();
@@ -51,6 +55,7 @@ $( document ).ready(function() {
     });
   }
 
+  // new city input search click handler
   $('#search-city').on('click', function(event) {
     event.preventDefault();
       
@@ -90,9 +95,8 @@ $( document ).ready(function() {
     if (storedCities) {
       cityArr = storedCities;
       if (!initialized) getData(cityArr[cityArr.length - 1]);
-    
-      console.log(cityArr.length);
-      
+  
+      // dynamically create buttons for each previously searched city
       for (let i = cityArr.length - 1; i >= 0; i--) {
         var buttonEl = $("<button class='list-group-item list-group-item-action' id=>").attr('type', 'button').attr('id', 'city-buttons')
         buttonEl.text(cityArr[i]);
@@ -106,7 +110,7 @@ $( document ).ready(function() {
 
   init();
   
-
+  // click handler for search history buttons
   $(function() {
     $(document).on("click", '#city-buttons', function(event) {
         event.preventDefault();
