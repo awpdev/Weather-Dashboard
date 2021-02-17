@@ -1,50 +1,23 @@
 $( document ).ready(function() {
 
-  let cityArr = [];
+  let cityArr = []; 
+  let initialized = false; 
 
+  // Get weather data for city, renders elements to display the data
   function getData(cityName) {
+
     let queryURL = 'https://api.openweathermap.org/data/2.5/weather?q=' + cityName + '&appid=' + '8b4842f519c4ee13b11ada28c264ec1a';
-    //clear();
-    console.log(queryURL);
     $.ajax({
       url: queryURL,
       method: "GET"
     }).then(function(OWMData) {
-      console.log(OWMData);
-      //clear();
-      /*if (OWMData) {
-        for (let i = 0; i < cityArr.length; i++) {
-          if (usersCityInput === cityArr[i]) break;
-            //else
-              
-        }
-          
-          cityArr.push(usersCityInput);
-          localStorage.setItem("cities", JSON.stringify(cityArr)); 
-            var li = document.createElement("li");
-          li.textContent = todo;
-          li.setAttribute("data-index", i);
-            for (let i = 0; i < cityArr.length; i++) {
-              $("#searched-cities-container").append();
-            }
-      } */
       let cityName = OWMData.name;
       let currTemp = converttoF(OWMData.main.temp);
       let currHumidity = OWMData.main.humidity;
       let windSpeed = (OWMData.wind.speed * 2.237).toFixed(1); // conversion to mph
       let lon = OWMData.coord.lon;
       let lat = OWMData.coord.lat;
-      //var uvQueryURL = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=" + "8b4842f519c4ee13b11ada28c264ec1a";
-      /*$.ajax({
-        url: uvQueryURL,
-        method: "GET"
-      }).then(function(OWMUvData) {
-        console.log(OWMUvData.value);
-        var uvIndex = OWMUvData.value;
-        if (uvIndex < 3) {
-        }
-        $("#uv-index").text("UV Index: " + uvIndex);
-      });*/
+      
       $('#city-name').text(cityName + ' (' + moment().format('l') + ') ');
       let currentWeatherIcon = $('<img>').attr('src', getWeatherIcon(OWMData.weather[0].main));
       $('#city-name').append(currentWeatherIcon);
@@ -57,12 +30,11 @@ $( document ).ready(function() {
         url: fcQueryURL,
         method: 'GET'
       }).then(function(OWMFcData) {
-        console.log(OWMFcData);
+        //console.log(OWMFcData);
         let uvIndex = OWMFcData.current.uvi;
-        if (uvIndex <= 2) $('#uv-index').addClass('safe');
-        if (uvIndex >= 6) $('#uv-index').addClass('danger');
+        if (uvIndex <= 2) $('#uv-index').addClass('safe'); // green if UV index less than or equal to 2
+        if (uvIndex >= 6) $('#uv-index').addClass('danger'); // red if UV index greater than or equal to 6
         $('#uv-index').text('UV Index: ' + uvIndex);
-        //$('#uvi').text(uvIndex);
         var forecastEl = $('#forecast');
         forecastEl.text('5-Day Forecast:\n');
         $('#forecast-card-container').empty();
@@ -76,55 +48,29 @@ $( document ).ready(function() {
         
         }
       });
-    /*
-            var gifDiv = $("<div>");
-
-            var rating = results[i].rating;
-
-            var p = $("<p>").text("Rating: " + rating);
-
-            var personImage = $("<img>");
-            personImage.attr("src", results[i].images.fixed_height.url);
-
-            gifDiv.prepend(p);
-            gifDiv.prepend(personImage);
-
-            $("#forecast-section").append();
-          }
-          */
     });
   }
 
-  $("#search-city").on("click", function(event) {
+  $('#search-city').on('click', function(event) {
     event.preventDefault();
       
     var usersCityInput = $("#users-city-input").val().trim();
     if (usersCityInput === "") return;
-    var textContent = $(this).siblings("input").val();
-    console.log(textContent);
-    cityArr.push(textContent);
-    localStorage.setItem('cities', JSON.stringify(cityArr));
-
+    //console.log(usersCityInput);
     getData(usersCityInput);
 
-    //loadButtons();
+    cityArr.push(usersCityInput);
+    localStorage.setItem('cities', JSON.stringify(cityArr));
+
+    init();
   });
 
   // Converts Kelvin to Fahrenheit
   function converttoF(t) {
     return ((t - 273.15) * 1.80 + 32).toFixed(1);
   }
-
-  // Clears the right side of the screen
-  function clear() {
-    $('#city-name').empty();
-    $('#current-temp').empty();
-    $('#current-humidity').empty();
-    $('#wind-speed').empty();
-    $('#uv-index').empty();
-    $('#forecast-section').empty();
-  }
   
+  // returns source url for icon from weather conditions
   function getWeatherIcon(cnd) {
     switch(cnd) {
       case 'Clear': return 'http://openweathermap.org/img/wn/01d.png'; 
@@ -136,23 +82,35 @@ $( document ).ready(function() {
       default: return 'http://openweathermap.org/img/wn/50d.png';
     }
   }
-/*
-  // load buttons for previously searched for cities from local storage
-  function loadButtons() { 
+
+  // load buttons for previously searched for cities from local storage and get weather data for last searched city
+  function init() {
     $('#city-buttons-container').empty();
-    let storedCities = JSON.parse(localStorage.getItem('cities'));
-    console.log(storedCities);
+    var storedCities = JSON.parse(localStorage.getItem('cities'));
     if (storedCities) {
       cityArr = storedCities;
-    }
-    let buttonsDiv = $('<div class list-group');
-    for (let i = cityArr.length - 1; i < 0; i--) {
-      let buttonEl = $('<button>').attr('type', 'button');
-      buttonEl.addClass('list-group-item list-group-item-action').text(cityArr[i]);
-      buttonsDiv.append(buttonEl);
-    }
-    ('#city-buttons-container').append(buttonsDiv);
+      if (!initialized) getData(cityArr[cityArr.length - 1]);
     
-  } */
-  //getData('Boca Raton');
+      console.log(cityArr.length);
+      
+      for (let i = cityArr.length - 1; i >= 0; i--) {
+        var buttonEl = $("<button class='list-group-item list-group-item-action' id=>").attr('type', 'button').attr('id', 'city-buttons')
+        buttonEl.text(cityArr[i]);
+        $('#city-buttons-container').append(buttonEl);
+      }
+      //$('#city-buttons-container').append(buttonsDiv);
+    }
+    initialized = true;
+    
+  } 
+
+  init();
+  
+
+  $(function() {
+    $(document).on("click", '#city-buttons', function(event) {
+        event.preventDefault();
+        getData($(this).text());
+    });
+  });
 });
